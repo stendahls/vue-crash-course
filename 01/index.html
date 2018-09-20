@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Products</h1>
+      <ul>
+        <li v-for="product in products">
+          <strong>{{product.name}}</strong>
+          <span> - In Stock: {{product.count}}</span>
+          <button :disabled="product.count <= 0" @click="buy(product)">Buy</button>
+        </li>
+      </ul>
+      <form @submit.prevent="addNew">
+        <input type="text" v-model="newProduct" />
+        <input type="submit" value="Create" />
+      </form>
+    </div>
+
+    <script src="https://unpkg.com/vue"></script>
+    <script>
+      const app = new Vue({
+        el: '#app',
+
+        data: {
+          products: [],
+          newProduct: null
+        },
+
+        mounted: function() {
+          fetch('/products.json')
+            .then(response => response.json())
+            .then(json => {
+              this.products = json;
+            });
+        },
+
+        methods: {
+          addNew: function() {
+            this.products.push({ name: this.newProduct, count: 4 });
+            this.newProduct = null;
+          },
+
+          buy: function(product) {
+            product.count--;
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
